@@ -1,8 +1,8 @@
 #!/bin/bash
  
 ###################################################################
-#Script Name	  : install.sh                                                                                            
-#Description     : Automated Initial Terminal mac bootstrap                                                                                                                                                                     
+#Script Name	: install.sh                                                                                            
+#Description    : Automated Initial Terminal mac bootstrap                                                                                                                                                                     
 #Author       	: Oliver Fletcher                                           
 #Email         	: helloworld@oliverfletcher.io                                      
 ###################################################################
