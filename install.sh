@@ -11,25 +11,30 @@
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
 # Install zsh & terminal utilities
+
 brew install iterm2
 brew install zsh
 brew install starship
 brew install tree
 brew install ripgrep
 brew install pwgen
+brew install vault
 brew install bash-completion
 brew install tmux
 brew install hub
 brew install docker
+brew install ansible
 brew install awscli
 brew install terraform
+brew install eksctl
+brew intsall minikube
 brew install kustomize
 brew install go
 brew install python3
 brew install icecream
-brew install telnet
-brew install hping
-
+brew install authy
+brew install openssl
+brew install netcat
 
 # Install lightline
 git clone https://github.com/itchyny/lightline.vim ~/.vim/pack/plugins/start/lightline
@@ -80,7 +85,6 @@ set nu
 syntax on
 nnoremap H gT
 nnoremap L gt
-execute pathogen#infect()
 set statusline+=%#warningmsg#
 set statusline+=%{SyntasticStatuslineFlag()}
 set statusline+=%*
