@@ -19,6 +19,7 @@ brew install tree
 brew install ripgrep
 brew install pwgen
 brew install vault
+brew install graphviz
 brew install bash-completion
 brew install tmux
 brew install hub
