@@ -15,18 +15,26 @@
 brew install iterm2
 brew install zsh
 brew install starship
+brew install wget
 brew install htop
 brew install tree
+brew install watch
+brew install thefuck
 brew install ripgrep
 brew install pwgen
+brew install packer
 brew install vault
 brew install graphviz
+brew install bash
 brew install bash-completion
 brew install tmux
 brew install hub
 brew install docker
 brew install ansible
 brew install awscli
+brew install aws-cdk
+brew install aws-sam-cli
+brew install cfn-lint
 brew install terraform
 brew install eksctl
 brew intsall minikube
@@ -51,8 +59,23 @@ pip3 install taskcat
 # Install tldr
 pip3 install tldr
 
+# Install boto3
+pip3 install boto3
+
+# Install pylint
+pip3 install pylint
+
+# Install pytest
+pip3 install pytest
+
+# Install yamllint
+pip3 install yamllint
+
 # Install virtualenv
 pip3 install virtualenv
+
+# Install ipaddr
+pip3 install ippaddr
 
 # Install net-tools
 pip3 install net-tools
