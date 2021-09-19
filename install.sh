@@ -41,7 +41,6 @@ brew intsall minikube
 brew install kustomize
 brew install go
 brew install python3
-brew install icecream
 brew install authy
 brew install openssl
 brew install netcat
@@ -61,6 +60,9 @@ pip3 install tldr
 
 # Install boto3
 pip3 install boto3
+
+# Install icecream
+pip3 install icecream
 
 # Install pylint
 pip3 install pylint
