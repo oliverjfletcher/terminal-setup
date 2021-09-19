@@ -11,7 +11,6 @@
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
 # Install zsh & terminal utilities
-
 brew install iterm2
 brew install zsh
 brew install starship
