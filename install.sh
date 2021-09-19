@@ -63,11 +63,10 @@ virtualenv venv
 source venv/bin/activate
 
 # Install ipaddr
-pip3 install ippaddr
+pip3 install ipaddr
 
 # Install net-tools
 pip3 install net-tools
-
 
 # Install taskcat
 pip3 install taskcat
