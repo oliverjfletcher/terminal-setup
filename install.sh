@@ -15,6 +15,7 @@
 brew install iterm2
 brew install zsh
 brew install starship
+brew install htop
 brew install tree
 brew install ripgrep
 brew install pwgen
