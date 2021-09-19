@@ -52,6 +52,23 @@ git clone https://github.com/itchyny/lightline.vim ~/.vim/pack/plugins/start/lig
 git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
 git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
 
+# Install virtualenv
+pip3 install virtualenv
+
+# Configure virtualenv
+mkdir virtualenv
+virtualenv venv
+
+# Activate virtualenv
+source venv/bin/activate
+
+# Install ipaddr
+pip3 install ippaddr
+
+# Install net-tools
+pip3 install net-tools
+
+
 # Install taskcat
 pip3 install taskcat
 
@@ -73,14 +90,8 @@ pip3 install pytest
 # Install yamllint
 pip3 install yamllint
 
-# Install virtualenv
-pip3 install virtualenv
-
-# Install ipaddr
-pip3 install ippaddr
-
-# Install net-tools
-pip3 install net-tools
+# Dectivate virtualenv
+deactivate
 
 # Install Powerline fonts
 git clone https://github.com/powerline/fonts.git --depth=1
