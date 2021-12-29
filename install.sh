@@ -2,7 +2,7 @@
  
 ###################################################################
 #Script Name	: install.sh                                                                                            
-#Description    : Automated Initial Terminal mac bootstrap                                                                                                                                                                     
+#Description    : Automated Initial Terminal Mac bootstrap                                                                                                                                                                     
 #Author       	: Oliver Fletcher                                           
 #Email         	: helloworld@oliverfletcher.io                                      
 ###################################################################
@@ -81,6 +81,9 @@ pip3 install icecream
 
 # Install pylint
 pip3 install pylint
+
+# Install flake8
+pip3 install flake8
 
 # Install pytest
 pip3 install pytest
