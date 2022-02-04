@@ -1,0 +1,10 @@
+ipaddr
+net-tools
+taskcat
+tldr
+boto3
+icecream
+pylint
+flake8
+pytest
+yamllint
