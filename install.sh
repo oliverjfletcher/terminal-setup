@@ -1,48 +1,82 @@
 #!/bin/bash
  
-###################################################################
+#######################################################################
 #Script Name	: install.sh                                                                                            
-#Description    : Automated Initial Terminal Mac bootstrap                                                                                                                                                                     
+#Description    : Automated Initial Terminal & App bootstrap for Mac                                                                                                                                                                     
 #Author       	: Oliver Fletcher                                           
 #Email         	: helloworld@oliverfletcher.io                                      
-###################################################################
+#######################################################################
+echo "Starting..."
+
+# Install xcode CLI
+xcode-select —-install
 
 # Install Brew
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
+#Install Mac Apps
+echo "Installing apps..."
+
+CASKS=(
+    iterm2
+    slack
+    telegram
+    docker
+    firefox
+    authy
+    spotify
+    visual-studio-code
+    keepassxc
+    sublime-text
+    vlc
+    zoom
+    flux
+    google-cloud-sdk
+    logitech-options
+
+)
+echo "Installing apps..."
+brew cask install ${CASKS[@]}
+
 # Install zsh & terminal utilities
-brew install iterm2
-brew install zsh
-brew install starship
-brew install wget
-brew install htop
-brew install tree
-brew install watch
-brew install thefuck
-brew install ripgrep
-brew install pwgen
-brew install packer
-brew install vault
-brew install graphviz
-brew install bash
-brew install bash-completion
-brew install tmux
-brew install hub
-brew install docker
-brew install ansible
-brew install awscli
-brew install aws-cdk
-brew install aws-sam-cli
-brew install cfn-lint
-brew install terraform
-brew install eksctl
-brew intsall minikube
-brew install kustomize
-brew install go
-brew install python3
-brew install authy
-brew install openssl
-brew install netcat
+echo "Installing packages..."
+
+PACKAGES=(
+    iterm2
+    zsh
+    starship
+    wget
+    htop
+    tree
+    watch
+    thefuck
+    ripgrep
+    pwgen
+    adr-tools
+    packer
+    vault
+    graphviz
+    bash
+    bash-completion
+    tmux
+    hub
+    docker
+    ansible
+    awscli
+    aws-cdk
+    aws-sam-cli
+    cfn-lint
+    terraform
+    eksctl
+    minikube
+    kustomize
+    go
+    python3
+    openssl
+    netcat
+)
+echo "Installing packages..."
+brew install ${PACKAGES[@]}
 
 # Install lightline
 git clone https://github.com/itchyny/lightline.vim ~/.vim/pack/plugins/start/lightline
@@ -61,35 +95,8 @@ virtualenv venv
 # Activate virtualenv
 source venv/bin/activate
 
-# Install ipaddr
-pip3 install ipaddr
-
-# Install net-tools
-pip3 install net-tools
-
-# Install taskcat
-pip3 install taskcat
-
-# Install tldr
-pip3 install tldr
-
-# Install boto3
-pip3 install boto3
-
-# Install icecream
-pip3 install icecream
-
-# Install pylint
-pip3 install pylint
-
-# Install flake8
-pip3 install flake8
-
-# Install pytest
-pip3 install pytest
-
-# Install yamllint
-pip3 install yamllint
+# Install Python tools
+pip3 install requirements.txt
 
 # Dectivate virtualenv
 deactivate
