@@ -23,6 +23,8 @@ CASKS=(
     telegram
     docker
     firefox
+    microsoft-office
+    little-snitch
     authy
     spotify
     visual-studio-code
@@ -42,7 +44,6 @@ brew cask install ${CASKS[@]}
 echo "Installing packages..."
 
 PACKAGES=(
-    iterm2
     zsh
     starship
     wget
