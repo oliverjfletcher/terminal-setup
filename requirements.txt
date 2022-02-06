@@ -8,3 +8,6 @@ pylint
 flake8
 pytest
 yamllint
+requests
+fabric
+flask
