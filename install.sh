@@ -69,7 +69,7 @@ PACKAGES=(
     cfn-lint
     terraform
     eksctl
-    minikube
+    kind
     kustomize
     go
     python3
