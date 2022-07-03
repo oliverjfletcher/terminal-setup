@@ -5,6 +5,7 @@ tldr
 boto3
 icecream
 pylint
+moto
 flake8
 pytest
 yamllint
