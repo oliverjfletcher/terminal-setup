@@ -49,6 +49,7 @@ PACKAGES=(
     wget
     htop
     tree
+    neovim
     watch
     thefuck
     ripgrep
