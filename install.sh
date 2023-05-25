@@ -50,6 +50,7 @@ PACKAGES=(
     htop
     tree
     neovim
+    zsh-autosuggestions
     watch
     thefuck
     ripgrep
@@ -83,8 +84,7 @@ brew install ${PACKAGES[@]}
 # Install lightline
 git clone https://github.com/itchyny/lightline.vim ~/.vim/pack/plugins/start/lightline
 
-# Get a zsh-[autosuggestions & syntax-highlighting.git] and add to zsh path
-git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+# Get a zsh syntax-highlighting and add to zsh path
 git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
 
 # Install virtualenv
