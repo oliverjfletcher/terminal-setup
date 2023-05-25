@@ -34,6 +34,7 @@ CASKS=(
     zoom
     flux
     google-cloud-sdk
+    cameracontroller
     logitech-options
 
 )
