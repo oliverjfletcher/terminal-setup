@@ -25,7 +25,7 @@ CASKS=(
     firefox
     microsoft-office
     little-snitch
-    authy
+    rancher
     spotify
     visual-studio-code
     keepassxc
@@ -52,6 +52,8 @@ PACKAGES=(
     tree
     neovim
     zsh-autosuggestions
+    zsh-syntax-highlighting
+    zsh-history-substring-search
     watch
     thefuck
     ripgrep
@@ -85,8 +87,14 @@ brew install ${PACKAGES[@]}
 # Install lightline
 git clone https://github.com/itchyny/lightline.vim ~/.vim/pack/plugins/start/lightline
 
-# Get a zsh syntax-highlighting and add to zsh path
-git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+# Get zsh syntax-highlighting and add to zsh path
+echo "source $(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" >> ${ZDOTDIR:-$HOME}/.zshrc
+
+# Get zsh history substring search, and add to zsh path
+echo 'source $(brew --prefix)/share/zsh-history-substring-search/zsh-history-substring-search.zsh' >> ~/.zshrc
+
+# Add zsh auto-suggestions to .zshrc
+source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 
 # Install virtualenv
 pip3 install virtualenv
@@ -118,29 +126,29 @@ code () { VSCODE_CWD="$PWD" open -n -b "com.microsoft.VSCode" --args $* ;} >> ~/
 echo "[ -f /usr/local/etc/bash_completion ] && . /usr/local/etc/bash_completion" >> ~/.bash_profile
 
 # Update .zshrc conf file
-sed -i '.zshrc' 's/_THEME="robbyrussell"/_THEME="fino-time"/g' ~/.zshrc 
-sed -i '.zshrc' 's/plugins=(/plugins=(zsh-autosuggestions zsh-syntax-highlighting /g' ~/.zshrc 
-source ~/.zshrc
-touch ~/.vimrc && cat << EOF > ~/.vimrc
-#starship
-eval "$(starship init zsh)" 
+cat << EOF >> ~/.zshrc
+alias k=kubectl
+THEME="robbyrussell"
+THEME="fino-time"
+eval "\$(starship init zsh)"
 EOF
+source ~/.zshrc
 
 # Basic vim developer .conf setup
 touch ~/.vimrc && cat << EOF > ~/.vimrc
 syntax on
-set nu sw=2 ts=2 softtabstop=2 expandtab autoindent pastetoggle=&lt;f5&gt;
 set nu
-syntax on
 nnoremap H gT
 nnoremap L gt
+set tabstop=2
+set expandtab
+set shiftwidth=2
 set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
 set statusline+=%*
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 1
-let g:syntastic_check_on_open = 1
-let g:syntastic_check_on_wq = 0
+let g:syntastic_always_populate_loc_list=1
+let g:syntastic_auto_loc_list=1
+let g:syntastic_check_on_open=1
+let g:syntastic_check_on_wq=0
 set laststatus=2
-let g:lightline = {'colorscheme': 'wombat'}
+let g:lightline={'colorscheme': 'wombat'}
 EOF
