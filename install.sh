@@ -80,6 +80,7 @@ PACKAGES=(
     python3
     openssl
     netcat
+    cilium-cli
 )
 echo "Installing packages..."
 brew install ${PACKAGES[@]}
