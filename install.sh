@@ -59,6 +59,7 @@ PACKAGES=(
     ripgrep
     pwgen
     adr-tools
+    argocd
     packer
     vault
     graphviz
