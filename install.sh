@@ -73,6 +73,7 @@ PACKAGES=(
     awscli
     aws-cdk
     aws-sam-cli
+    clusterawsadm
     cfn-lint
     terraform
     eksctl
