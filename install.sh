@@ -60,6 +60,7 @@ PACKAGES=(
     pwgen
     adr-tools
     argocd
+    argoproj/tap/kubectl-argo-rollouts
     packer
     vault
     graphviz
