@@ -117,14 +117,13 @@ rm -rf fonts
 
 # Update .bash_profile
 cat << 'EOF' >> ~/.bash_profile
-source <(kubectl completion bash)'
-'alias k=kubectl' >>~/.bash_profile
-'complete -o default -F __start_kubectl k' >>~/.bash_profile
+source <(kubectl completion bash)
+alias k=kubectl
+complete -o default -F __start_kubectl k
 if [ -f $(brew --prefix)/etc/bash_completion ]; then
   . $(brew --prefix)/etc/bash_completion
 fi
 export BASH_COMPLETION_COMPAT_DIR="/usr/local/etc/bash_completion.d"
-[[ -r "/usr/local/etc/profile.d/bash_completion.sh" ]] && . "/usr/local/etc/profile.d/bash_completion.sh"
 export PATH="$PATH:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
 EOF
 source ~/.bash_profile
