@@ -85,20 +85,12 @@ PACKAGES=(
     netcat
     cilium-cli
 )
+
 echo "Installing packages..."
 brew install ${PACKAGES[@]}
 
 # Install lightline
 git clone https://github.com/itchyny/lightline.vim ~/.vim/pack/plugins/start/lightline
-
-# Get zsh syntax-highlighting and add to zsh path
-echo "source $(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" >> ${ZDOTDIR:-$HOME}/.zshrc
-
-# Get zsh history substring search, and add to zsh path
-echo 'source $(brew --prefix)/share/zsh-history-substring-search/zsh-history-substring-search.zsh' >> ~/.zshrc
-
-# Add zsh auto-suggestions to .zshrc
-source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 
 # Install virtualenv
 pip3 install virtualenv
@@ -123,18 +115,34 @@ cd fonts
 cd ..
 rm -rf fonts
 
-# Add vscode terminal shortcut to zsh
-code () { VSCODE_CWD="$PWD" open -n -b "com.microsoft.VSCode" --args $* ;} >> ~/.zshrc
-
-# Setup bash-completion
-echo "[ -f /usr/local/etc/bash_completion ] && . /usr/local/etc/bash_completion" >> ~/.bash_profile
+# Update .bash_profile
+cat << 'EOF' >> ~/.bash_profile
+source <(kubectl completion bash)'
+'alias k=kubectl' >>~/.bash_profile
+'complete -o default -F __start_kubectl k' >>~/.bash_profile
+if [ -f $(brew --prefix)/etc/bash_completion ]; then
+  . $(brew --prefix)/etc/bash_completion
+fi
+export BASH_COMPLETION_COMPAT_DIR="/usr/local/etc/bash_completion.d"
+[[ -r "/usr/local/etc/profile.d/bash_completion.sh" ]] && . "/usr/local/etc/profile.d/bash_completion.sh"
+export PATH="$PATH:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
+EOF
+source ~/.bash_profile
 
 # Update .zshrc conf file
-cat << EOF >> ~/.zshrc
+cat << 'EOF' >> ~/.zshrc
+autoload -Uz compinit
+compinit
 alias k=kubectl
-THEME="robbyrussell"
-THEME="fino-time"
-eval "\$(starship init zsh)"
+THEME="robbyrussell
+THEME="fino-time
+plugins=zsh-autosuggestions,zsh-syntax-highlighting
+eval "$(starship init zsh)"
+source <(kubectl completion zsh)
+source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+source $(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source $(brew --prefix)/share/zsh-history-substring-search/zsh-history-substring-search.zsh
+code () { VSCODE_CWD="$PWD" open -n -b "com.microsoft.VSCode" --args $* ;}
 EOF
 source ~/.zshrc
 
