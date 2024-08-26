@@ -63,6 +63,7 @@ PACKAGES=(
     argoproj/tap/kubectl-argo-rollouts
     packer
     vault
+    cmctl
     graphviz
     bash
     bash-completion
@@ -79,6 +80,7 @@ PACKAGES=(
     eksctl
     kind
     kustomize
+    k9s
     go
     python3
     openssl
