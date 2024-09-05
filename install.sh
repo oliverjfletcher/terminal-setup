@@ -112,7 +112,7 @@ git clone https://github.com/itchyny/lightline.vim ~/.vim/pack/plugins/start/lig
 pip3 install virtualenv
 
 # Configure virtualenv
-mkdir virtualenv
+mkdir $HOME/virtualenv
 virtualenv venv
 
 # Activate virtualenv
@@ -126,10 +126,8 @@ deactivate
 
 # Install Powerline fonts
 git clone https://github.com/powerline/fonts.git --depth=1
-cd fonts
-./install.sh
-cd ..
-rm -rf fonts
+cd fonts && ./install.sh && cd ..
+rm -f -r fonts
 
 # Update .bash_profile
 echo "Configuring bash profile..."
