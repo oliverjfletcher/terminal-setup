@@ -8,21 +8,38 @@
 #######################################################################
 echo "Starting..."
 
-# Install xcode CLI
-xcode-select —-install
+# Install xcode
+install_xcode() {
+    if ! command -v xcode-select &> /dev/null
+    then
+        echo "xcode is not installed. Installing now..."
+        xcode-select --install
+        
+        # Wait for the installation to complete
+        while ! command -v xcode-select &> /dev/null
+        do
+            echo "Waiting for xcode installation to complete..."
+            sleep 5
+        done
+        
+        echo "xcode has been successfully installed."
+    else
+        echo "xcode is already installed, continuing..."
+    fi
+}
+install_xcode
 
 # Install Brew
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
 #Install Mac Apps
 echo "Installing apps..."
-
 CASKS=(
     iterm2
     slack
     telegram
     docker
-    firefox
+    arc
     microsoft-office
     little-snitch
     rancher
@@ -36,14 +53,12 @@ CASKS=(
     google-cloud-sdk
     cameracontroller
     logitech-options
-
 )
 echo "Installing apps..."
 brew cask install ${CASKS[@]}
 
 # Install zsh & terminal utilities
 echo "Installing packages..."
-
 PACKAGES=(
     zsh
     starship
@@ -87,7 +102,6 @@ PACKAGES=(
     netcat
     cilium-cli
 )
-
 echo "Installing packages..."
 brew install ${PACKAGES[@]}
 
@@ -118,6 +132,7 @@ cd ..
 rm -rf fonts
 
 # Update .bash_profile
+echo "Configuring bash profile..."
 cat << 'EOF' >> ~/.bash_profile
 source <(kubectl completion bash)
 alias k=kubectl
@@ -131,6 +146,7 @@ EOF
 source ~/.bash_profile
 
 # Update .zshrc conf file
+echo "Configuring zshrc..."
 cat << 'EOF' >> ~/.zshrc
 autoload -Uz compinit
 compinit
@@ -148,6 +164,7 @@ EOF
 source ~/.zshrc
 
 # Basic vim developer .conf setup
+echo "Configuring vimrc..."
 touch ~/.vimrc && cat << EOF > ~/.vimrc
 syntax on
 set nu
