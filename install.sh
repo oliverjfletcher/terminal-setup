@@ -146,8 +146,8 @@ source ~/.bash_profile
 # Update .zshrc conf file
 echo "Configuring zshrc..."
 cat << 'EOF' >> ~/.zshrc
-autoload -Uz compinit
-compinit
+autoload bashcompinit && bashcompinit
+autoload -Uz compinit && compinit
 alias k=kubectl
 THEME="robbyrussell
 THEME="fino-time
@@ -158,8 +158,17 @@ source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 source $(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 source $(brew --prefix)/share/zsh-history-substring-search/zsh-history-substring-search.zsh
 code () { VSCODE_CWD="$PWD" open -n -b "com.microsoft.VSCode" --args $* ;}
+complete -C '/usr/local/bin/aws_completer' aws
+export PATH=/usr/local/bin/aws_completer:$PATH
 EOF
 source ~/.zshrc
+
+# Update .tschrc conf file
+echo "Configuring zshrc..."
+cat << 'EOF' >> ~/.tschrc
+complete aws 'p/*/`aws_completer`/'
+EOF
+source ~/.tschrc
 
 # Basic vim developer .conf setup
 echo "Configuring vimrc..."
