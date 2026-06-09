@@ -4,7 +4,7 @@
 #Script Name	: install.sh                                                                                            
 #Description    : Automated Initial Terminal & App bootstrap for Mac                                                                                                                                                                     
 #Author       	: Oliver Fletcher                                           
-#Email         	: helloworld@oliverfletcher.io                                      
+#Email         	: engineering@oliverfletcher.io                                      
 #######################################################################
 echo "Starting..."
 
@@ -53,9 +53,14 @@ CASKS=(
     google-cloud-sdk
     cameracontroller
     logitech-options
+    claude
+    claude-code
+    hamed-elfayome/claude-usage/claude-usage-tracker
+    gcloud-cli
+    chromedriver
 )
 echo "Installing apps..."
-brew cask install ${CASKS[@]}
+brew install --cask ${CASKS[@]}
 
 # Install zsh & terminal utilities
 echo "Installing packages..."
@@ -101,6 +106,31 @@ PACKAGES=(
     openssl
     netcat
     cilium-cli
+    parallel
+    gh
+    git-filter-repo
+    pre-commit
+    shellcheck
+    yamllint
+    cmake
+    ninja
+    grpcurl
+    cloudflared
+    certbot
+    pyenv
+    python@3.11
+    pipx
+    yarn
+    yt-dlp
+    aqtinstall
+    kubernetes-cli
+    helm
+    ingress2gateway
+    fluxcd/tap/flux
+    azure/kubelogin/kubelogin
+    azure-cli
+    mongodb-atlas-cli
+    infisical/get-cli/infisical
 )
 echo "Installing packages..."
 brew install ${PACKAGES[@]}
@@ -129,63 +159,31 @@ git clone https://github.com/powerline/fonts.git --depth=1
 cd fonts && ./install.sh && cd ..
 rm -f -r fonts
 
-# Update .bash_profile
-echo "Configuring bash profile..."
-cat << 'EOF' >> ~/.bash_profile
-source <(kubectl completion bash)
-alias k=kubectl
-complete -o default -F __start_kubectl k
-if [ -f $(brew --prefix)/etc/bash_completion ]; then
-  . $(brew --prefix)/etc/bash_completion
+# Apply dotfiles from the repo's dotfiles/ directory.
+# The dotfiles/ directory is the source of truth for shell + editor config.
+# To capture changes made on a live machine back into the repo, run:
+#     ./backup-dotfiles.sh
+echo "Applying dotfiles..."
+REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DOTFILES_DIR="$REPO_DIR/dotfiles"
+TIMESTAMP="$(date +%Y%m%d-%H%M%S)"
+
+if [ -d "$DOTFILES_DIR" ]; then
+    for src in "$DOTFILES_DIR"/.[!.]*; do
+        [ -e "$src" ] || continue
+        name="$(basename "$src")"
+        dest="$HOME/$name"
+        if [ -e "$dest" ] && ! cmp -s "$src" "$dest"; then
+            cp "$dest" "$dest.bak.$TIMESTAMP"
+            echo "backed up existing $name -> $name.bak.$TIMESTAMP"
+        fi
+        cp "$src" "$dest"
+        echo "applied: $name"
+    done
+else
+    echo "warning: $DOTFILES_DIR not found, skipping dotfile sync"
 fi
-export BASH_COMPLETION_COMPAT_DIR="/usr/local/etc/bash_completion.d"
-export PATH="$PATH:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
-EOF
-source ~/.bash_profile
 
-# Update .zshrc conf file
-echo "Configuring zshrc..."
-cat << 'EOF' >> ~/.zshrc
-autoload bashcompinit && bashcompinit
-autoload -Uz compinit && compinit
-alias k=kubectl
-THEME="robbyrussell
-THEME="fino-time
-plugins=zsh-autosuggestions,zsh-syntax-highlighting
-eval "$(starship init zsh)"
-source <(kubectl completion zsh)
-source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
-source $(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-source $(brew --prefix)/share/zsh-history-substring-search/zsh-history-substring-search.zsh
-code () { VSCODE_CWD="$PWD" open -n -b "com.microsoft.VSCode" --args $* ;}
-complete -C '/usr/local/bin/aws_completer' aws
-export PATH=/usr/local/bin/aws_completer:$PATH
-EOF
-source ~/.zshrc
-
-# Update .tschrc conf file
-echo "Configuring zshrc..."
-cat << 'EOF' >> ~/.tschrc
-complete aws 'p/*/`aws_completer`/'
-EOF
-source ~/.tschrc
-
-# Basic vim developer .conf setup
-echo "Configuring vimrc..."
-touch ~/.vimrc && cat << EOF > ~/.vimrc
-syntax on
-set nu
-nnoremap H gT
-nnoremap L gt
-set tabstop=2
-set expandtab
-set shiftwidth=2
-set statusline+=%#warningmsg#
-set statusline+=%*
-let g:syntastic_always_populate_loc_list=1
-let g:syntastic_auto_loc_list=1
-let g:syntastic_check_on_open=1
-let g:syntastic_check_on_wq=0
-set laststatus=2
-let g:lightline={'colorscheme': 'wombat'}
-EOF
+# Reload shells that were updated
+[ -f ~/.bash_profile ] && source ~/.bash_profile
+[ -f ~/.zshrc ] && source ~/.zshrc
