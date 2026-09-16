@@ -1,0 +1,13 @@
+# Secrets, signing, scanning. Installed by default.
+
+brew "gnupg"
+brew "pinentry-mac"         # lets gpg prompt via the macOS keychain UI
+brew "sops"
+brew "age"
+brew "trivy"
+tap "infisical/get-cli"
+brew "infisical/get-cli/infisical"
+
+brew "nmap"                 # also provides ncat, replacing the ancient netcat
+brew "sshuttle"
+brew "mtr"

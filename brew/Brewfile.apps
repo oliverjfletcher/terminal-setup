@@ -1,0 +1,46 @@
+# GUI applications. Installed by default.
+
+# Terminal + editors
+cask "iterm2"
+cask "ghostty"              # faster, actively developed; try it alongside iTerm2
+cask "visual-studio-code"
+cask "sublime-text"
+
+# Container runtime. OrbStack only - dotfiles/.zprofile already sources its
+# shell integration, and it is much lighter than Docker Desktop.
+# Docker Desktop and Rancher Desktop both ship their own `docker` binary and
+# fight over ~/.docker/config.json and the daemon socket, so they are off by
+# default. Uncomment one (and only one) if you actually need it.
+cask "orbstack"
+# cask "docker-desktop"     # renamed from `docker`
+# cask "rancher"
+
+# AI
+cask "claude"
+cask "claude-code"
+tap "hamed-elfayome/claude-usage"
+cask "hamed-elfayome/claude-usage/claude-usage-tracker"
+
+# Productivity / window management
+cask "raycast"
+cask "rectangle"
+cask "stats"
+cask "flux"
+
+# Comms
+cask "slack"
+cask "telegram"
+cask "zoom"
+
+# Security
+cask "keepassxc"
+cask "little-snitch"
+
+# Media / misc
+cask "spotify"
+cask "vlc"
+cask "arc"
+cask "microsoft-office"
+cask "chromedriver"
+cask "cameracontroller"
+cask "logi-options+"        # `logitech-options` is the legacy app

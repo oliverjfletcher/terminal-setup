@@ -4,26 +4,73 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Purpose
 
-Single-shot bootstrap of a fresh macOS machine: installs Xcode CLT, Homebrew, GUI casks, CLI packages, a Python virtualenv, Powerline fonts, and lays down shell + editor config from `dotfiles/`. Not a dotfiles framework — there's no uninstall and no per-host branching.
+Single-shot bootstrap of a fresh macOS machine: installs Xcode CLT, Homebrew,
+selected package groups, Python CLI tools, shell/editor plugins, and lays down
+shell + editor config from `dotfiles/`. Not a dotfiles framework — there's no
+uninstall and no per-host branching.
 
 ## Running
 
 ```bash
-./install.sh               # full bootstrap (apps + packages + dotfiles)
-./backup-dotfiles.sh       # capture current $HOME dotfiles back into dotfiles/
+./install.sh                  # interactive group picker + progress display
+./install.sh --yes            # non-interactive, default groups
+./install.sh --dry-run        # change nothing, show what would happen
+./install.sh --list           # show groups and defaults
+./backup-dotfiles.sh          # capture $HOME dotfiles back into dotfiles/
+./backup-dotfiles.sh --brew   # also dump installed packages for drift diffing
 ```
 
-The README's one-liner is the canonical entry point. There are no tests, no linter, and no CI.
+The README's clone + `./install.sh` is the canonical entry point. There are no
+tests and no CI; `shellcheck` (installed by the `core` group) is the closest
+thing to a linter — keep `shellcheck -S warning install.sh backup-dotfiles.sh`
+clean.
 
 ## Structure
 
-- `install.sh` — the entire bootstrap. Tooling changes happen by editing the `CASKS` or `PACKAGES` bash arrays. The dotfile-application section just copies everything from `dotfiles/` into `$HOME` (with a timestamped `.bak` of anything overwritten that differs).
-- `dotfiles/` — source of truth for shell + editor config. Files here are copied verbatim into `$HOME` by `install.sh`. Edit them directly, or edit on a live machine and run `backup-dotfiles.sh` to pull changes back.
-- `backup-dotfiles.sh` — copies a curated allowlist of `$HOME` dotfiles into `dotfiles/`. The allowlist is intentional — `.claude.json`, `.k8s_*_cache.json`, history files, and other secrets/state are deliberately skipped. Add new files to the `FILES=(...)` array; do not switch to a glob without a denylist.
-- `requirements.txt` — Python packages installed into the `venv` virtualenv created under the repo directory. Note: `install.sh` invokes `pip3 install requirements.txt` (missing `-r`), so the file is currently not actually consumed — preserve or fix deliberately, don't "clean up" silently.
+- `install.sh` — the entire bootstrap, as a group-driven interactive installer.
+  Tooling changes happen by editing `brew/Brewfile.*`, not by editing this file.
+- `brew/Brewfile.*` — one file per installable group (`core`, `dev`,
+  `kubernetes`, `cloud`, `aws`, `security`, `apps`, `fonts`). Plain
+  `brew`/`cask`/`tap` lines; `install.sh` parses them itself rather than
+  shelling out to `brew bundle`, so it can show per-package progress and
+  isolate failures.
+- `dotfiles/` — source of truth for shell + editor config. Copied verbatim into
+  `$HOME`, **including nested paths** (`dotfiles/.config/starship.toml` →
+  `~/.config/starship.toml`).
+- `backup-dotfiles.sh` — copies a curated allowlist of `$HOME` dotfiles into
+  `dotfiles/`. The allowlist is intentional — `.claude.json`,
+  `.k8s_*_cache.json`, history files, and other secrets/state are deliberately
+  skipped. Add new files to the `FILES=(...)` array; do not switch to a glob
+  without a denylist.
+- `python-tools.txt` — Python *CLI tools*, installed with `uv tool install`.
+  Libraries (boto3, requests, flask) do not belong here; they are per-project
+  dependencies.
 
 ## Things to know before editing
 
-- **Dotfile editing direction**: edit `dotfiles/*` in the repo for changes that should propagate to new machines; edit `~/.zshrc` etc. on a live machine and then run `backup-dotfiles.sh` to capture. Don't add new `cat << EOF >> ~/.rc` heredocs to `install.sh` — that path was removed in favor of file copies.
-- **Brew cask syntax**: the script uses `brew install --cask`. The older `brew cask install` no longer works on modern Homebrew.
-- Order matters in `install.sh`: Homebrew must install before any `brew install` line; the virtualenv is created in the repo's working directory (`virtualenv venv`) and `source venv/bin/activate` depends on cwd.
+- **macOS ships bash 3.2.** `install.sh` runs under `#!/bin/bash`, so no
+  associative arrays, no `mapfile`, no `${var,,}`, and no fractional `read -t`.
+  Group tables are parallel indexed arrays for this reason.
+- **`local a=$1 b=$a` does not work.** bash expands every word of a `local`
+  statement before assigning any of them, so `b` sees the *global* `a` — an
+  unbound-variable error under `set -u`. Split such assignments across lines.
+- **BSD `seq 1 0` counts down** and prints `1 0`, so `printf 'x%.0s' $(seq 1 $n)`
+  is wrong for `n=0`. Progress bars are built with an explicit loop.
+- **Packages are installed one at a time, on purpose.** `brew install a b c`
+  resolves every name first and aborts the whole batch if any one fails, which
+  previously meant a single renamed formula silently installed nothing.
+- **Third-party taps must be trusted.** Homebrew 6+ refuses to load formulae
+  from untrusted taps; `install_group` runs `brew trust --tap` after tapping.
+  This is what broke `vault` and `packer` under the old flat `PACKAGES` array.
+- **Homebrew is not on PATH after it installs.** `ensure_homebrew` evaluates
+  `brew shellenv` explicitly; without it every subsequent `brew install` fails
+  on a fresh Apple Silicon machine.
+- **`command -v xcode-select` is always true** — `/usr/bin/xcode-select` ships
+  with macOS even when the CLT are absent. Use `xcode-select -p` instead.
+- **Dotfile editing direction**: edit `dotfiles/*` in the repo for changes that
+  should propagate to new machines; edit `~/.zshrc` etc. on a live machine and
+  then run `backup-dotfiles.sh` to capture. Don't add `cat << EOF >> ~/.rc`
+  heredocs to `install.sh` — that path was removed in favour of file copies.
+- **Container runtime**: OrbStack only. Docker Desktop and Rancher Desktop are
+  commented out in `brew/Brewfile.apps` because all three ship a `docker`
+  binary and contend over `~/.docker/config.json` and the daemon socket.

@@ -1,0 +1,22 @@
+# Python CLI tools, installed with `uv tool install` (each gets its own
+# isolated env, exposed on PATH). Installed by the "python" group in install.sh.
+#
+# This replaces the old requirements.txt + `virtualenv venv` block, which
+# never worked: `pip3 install requirements.txt` was missing -r, and
+# `pip3 install virtualenv` now fails against an externally-managed Python
+# (PEP 668). Anything below is a *command*, not a library - project
+# dependencies like boto3/requests/flask belong in the project's own venv.
+
+ruff            # linter + formatter; replaces flake8 and most of pylint
+pylint
+taskcat
+fabric
+icecream
+
+# Dropped from the old requirements.txt:
+#   ipaddr, net-tools  - Python 2-era, abandoned
+#   yamllint           - now installed via Homebrew (Brewfile.core)
+#   tldr               - replaced by `tealdeer` (Brewfile.core)
+#   flake8             - superseded by ruff
+#   boto3, requests, flask, moto, pytest - libraries, not CLI tools; install
+#                        them per-project with `uv add` / `uv pip install`

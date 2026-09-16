@@ -1,0 +1,6 @@
+# Nerd Fonts. Installed by default.
+# Replaces the deprecated powerline/fonts git clone the old install.sh used;
+# these are in homebrew-cask now.
+cask "font-meslo-lg-nerd-font"
+cask "font-jetbrains-mono-nerd-font"
+cask "font-hack-nerd-font"

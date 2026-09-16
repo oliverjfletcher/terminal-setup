@@ -1,0 +1,51 @@
+# Core shell + everyday CLI. Installed by default.
+
+brew "zsh"
+brew "starship"
+brew "zsh-autosuggestions"
+brew "zsh-syntax-highlighting"
+brew "zsh-history-substring-search"
+brew "bash"                 # macOS ships bash 3.2; this is 5.x
+brew "bash-completion@2"
+brew "tmux"
+brew "neovim"
+
+# Search / navigation
+brew "ripgrep"
+brew "fd"
+brew "fzf"
+brew "zoxide"
+brew "tree"
+brew "eza"                  # ls replacement
+brew "bat"                  # cat replacement
+
+# Data wrangling
+brew "jq"
+brew "yq"
+
+# Git
+brew "gh"
+brew "git-delta"            # pager, wired up in dotfiles/.gitconfig
+brew "difftastic"
+brew "lazygit"
+brew "git-filter-repo"
+
+# System
+brew "btop"                 # replaces htop
+brew "dust"                 # du replacement
+brew "procs"                # ps replacement
+brew "watch"
+brew "wget"
+brew "parallel"
+brew "pwgen"
+brew "tealdeer"             # tldr client; replaces the `tldr` pip package
+brew "direnv"
+brew "just"
+brew "watchexec"
+brew "glow"
+
+# Removed from the old PACKAGES list:
+#   thefuck  - unmaintained, breaks on new Pythons, costs shell startup time
+#   hub      - deprecated by GitHub in favour of `gh`
+#   htop     - superseded by btop
+#   netcat   - the GNU 0.7.1 build from 2004; use macOS `nc` or nmap's ncat

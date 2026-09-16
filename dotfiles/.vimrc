@@ -1,15 +1,34 @@
+" ~/.vimrc - vim is the quick-edit fallback; nvim is $EDITOR.
+
 syntax on
-set nu
+filetype plugin indent on
+
+set number
+set tabstop=2
+set shiftwidth=2
+set expandtab
+set autoindent
+set incsearch
+set ignorecase
+set smartcase
+set hlsearch
+set scrolloff=3
+set mouse=a
+set clipboard=unnamed          " yank straight to the macOS pasteboard
+set undofile
+set undodir=~/.vim/undo
+set backupdir=~/.vim/backup//
+set directory=~/.vim/swap//
+
+" Tab navigation
 nnoremap H gT
 nnoremap L gt
-set tabstop=2
-set expandtab
-set shiftwidth=2
-set statusline+=%#warningmsg#
-set statusline+=%*
-let g:syntastic_always_populate_loc_list=1
-let g:syntastic_auto_loc_list=1
-let g:syntastic_check_on_open=1
-let g:syntastic_check_on_wq=0
+nnoremap <silent> <Esc><Esc> :nohlsearch<CR>
+
+" Statusline. lightline is cloned into ~/.vim/pack/plugins/start by install.sh.
 set laststatus=2
-let g:lightline={'colorscheme': 'wombat'}
+set noshowmode                 " lightline already shows the mode
+let g:lightline = {'colorscheme': 'wombat'}
+
+" The old g:syntastic_* settings were removed: syntastic was never installed,
+" so they did nothing. If you want linting in vim, install ALE or use nvim.

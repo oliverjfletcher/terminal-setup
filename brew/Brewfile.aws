@@ -1,0 +1,9 @@
+# AWS + CloudFormation. NOT installed by default - none of it was present on
+# the machine this repo was last synced from. Select the "aws" group in
+# install.sh, or run: ./install.sh --only aws
+brew "awscli"
+brew "aws-cdk"
+brew "aws-sam-cli"
+brew "cfn-lint"
+brew "eksctl"
+brew "clusterawsadm"

@@ -1,0 +1,24 @@
+# Cloud providers + infrastructure as code. Installed by default.
+
+# HashiCorp moved these out of homebrew-core under the BUSL relicense.
+# install.sh runs `brew trust --tap hashicorp/tap` before installing, because
+# Homebrew 6 refuses to load formulae from untrusted third-party taps.
+tap "hashicorp/tap"
+brew "hashicorp/tap/terraform"
+brew "hashicorp/tap/vault"
+brew "hashicorp/tap/packer"
+
+brew "terragrunt"
+brew "terraform-docs"
+tap "terraform-linters/tap"
+cask "terraform-linters/tap/tflint"
+
+brew "ansible"
+brew "azure-cli"
+tap "azure/kubelogin"
+brew "azure/kubelogin/kubelogin"
+brew "mongodb-atlas-cli"
+brew "cloudflared"
+brew "certbot"
+
+cask "gcloud-cli"           # was listed twice before, as google-cloud-sdk + gcloud-cli

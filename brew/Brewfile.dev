@@ -1,0 +1,33 @@
+# Languages, build tooling, linters. Installed by default.
+
+# Toolchain managers. These replace pyenv + python@3.11 + node installs.
+brew "uv"                   # Python packaging / `uv tool install`
+brew "pipx"
+brew "mise"                 # polyglot runtime manager (python, node, go, ...)
+
+brew "python@3.13"          # stable interpreter for anything not managed by uv/mise
+brew "go"
+brew "yarn"
+
+# Build
+brew "cmake"
+brew "ninja"
+brew "graphviz"
+
+# Lint / quality
+brew "shellcheck"
+brew "yamllint"
+brew "pre-commit"
+brew "hadolint"
+brew "tokei"
+
+# Misc dev
+brew "grpcurl"
+brew "httpie"
+brew "act"                  # run GitHub Actions locally
+brew "adr-tools"
+brew "aqtinstall"
+brew "yt-dlp"
+
+# Removed: pyenv, python@3.11, python3 (use mise/uv), openssl (keg-only, rarely
+# what you actually link against on macOS)

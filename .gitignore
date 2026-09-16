@@ -1,0 +1,13 @@
+# Python virtualenvs (install.sh no longer creates these, but old runs left them)
+venv/
+.venv/
+__pycache__/
+
+# Homebrew snapshot produced by backup-dotfiles.sh --dump
+brew/Brewfile.dump
+
+# macOS
+.DS_Store
+
+# Timestamped dotfile backups, if ever created inside the repo
+*.bak.*
