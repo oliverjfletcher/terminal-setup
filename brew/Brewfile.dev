@@ -7,6 +7,7 @@ brew "mise"                 # polyglot runtime manager (python, node, go, ...)
 
 brew "python@3.13"          # stable interpreter for anything not managed by uv/mise
 brew "go"
+brew "node"                 # provides npx for the Claude Code MCP servers in mcp-servers.json
 brew "yarn"
 
 # Build

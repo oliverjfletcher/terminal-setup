@@ -1,6 +1,11 @@
+# Default (work) identity. `gitprofile personal` (see ~/.zshrc) links
+# ~/.config/git/active-profile to a profile that overrides it; `gitprofile work`
+# removes the link. A missing include file is silently ignored by git.
 [user]
 	name = Oliver Fletcher
 	email = oliver@oliverfletcher.io
+[include]
+	path = ~/.config/git/active-profile
 
 [init]
 	defaultBranch = main

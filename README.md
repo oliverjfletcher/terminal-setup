@@ -29,6 +29,7 @@ Select what to install
    ◉ fonts        Nerd Fonts for the terminal prompt
    ◉ python       Python CLI tools via uv
    ◉ plugins      tmux tpm, vim lightline, fzf keys
+   ◉ mcp          Claude Code MCP servers (mcp-servers.json)
    ◉ dotfiles     Copy dotfiles/ into $HOME
 ```
 
@@ -68,14 +69,25 @@ backup-dotfiles.sh    $HOME -> repo, curated allowlist
 brew/Brewfile.*       one file per package group
 dotfiles/             source of truth for shell + editor config
 python-tools.txt      Python CLI tools installed with `uv tool install`
+mcp-servers.json      Claude Code MCP servers, added at user scope
 ```
 
 ## After installing
 
 1. Restart the terminal, or `exec zsh`.
-2. Set the terminal font to **MesloLGS Nerd Font** so the prompt glyphs render.
+2. Ghostty is preconfigured (`dotfiles/.config/ghostty/config.ghostty`). In
+   iTerm2, set the font to **MesloLGS Nerd Font** so the prompt glyphs render.
+   Ghostty's quick terminal (cmd+\`) needs Accessibility permission the first
+   time it is used.
 3. In tmux, press `prefix + I` to fetch plugins.
 4. Sign in: `gh auth login`, `gcloud auth login`, `az login`.
+5. In Claude Code, run `/mcp` and sign in to each remote MCP server (Atlassian,
+   Cloudflare, Datadog, Slack, Wiz). The AWS servers use your normal AWS
+   credentials and `AWS_PROFILE` / `AWS_REGION`. `aws-mcp` connects to the
+   managed AWS MCP Server in `AWS_MCP_REGION` (default `eu-west-1`); that is
+   only where the server runs, and calls can still target any region. Datadog
+   uses `DD_SITE` (for example `datadoghq.com` for US1) and defaults to EU1.
+   Set these in `~/.zshrc.local`.
 
 Machine-specific settings that should not be committed go in `~/.zshrc.local`,
 which `.zshrc` sources if present.

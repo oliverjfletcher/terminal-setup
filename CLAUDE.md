@@ -45,6 +45,14 @@ clean.
 - `python-tools.txt` — Python *CLI tools*, installed with `uv tool install`.
   Libraries (boto3, requests, flask) do not belong here; they are per-project
   dependencies.
+- `mcp-servers.json` — Claude Code MCP servers, in `.mcp.json` format. The
+  `mcp` group adds each one with `claude mcp add-json -s user`, replacing an
+  existing user-scope entry of the same name if it differs. Keep
+  `${VAR:-default}` references unexpanded: Claude Code expands them when the
+  server starts, so `AWS_PROFILE` / `DD_SITE` can change after install.
+  `aws-mcp` passes `--region` explicitly, set to the endpoint's region:
+  `mcp-proxy-for-aws` otherwise signs with `$AWS_REGION`, and a mismatch with
+  the endpoint fails SigV4. The working region goes in `--metadata AWS_REGION=`.
 
 ## Things to know before editing
 

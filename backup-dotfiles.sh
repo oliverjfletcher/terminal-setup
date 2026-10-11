@@ -32,6 +32,8 @@ FILES=(
     .zshrc
     .config/starship.toml
     .config/git/ignore
+    .config/git/profiles/personal
+    .config/ghostty/config.ghostty
 )
 
 copied=0

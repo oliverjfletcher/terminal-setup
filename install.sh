@@ -3,7 +3,8 @@
 # Script Name  : install.sh
 # Description  : Interactive bootstrap for a fresh macOS machine.
 #                Installs Xcode CLT, Homebrew, selected package groups,
-#                Python CLI tools, shell plugins, and dotfiles.
+#                Python CLI tools, shell plugins, Claude Code MCP servers,
+#                and dotfiles.
 # Author       : Oliver Fletcher
 # Email        : engineering@oliverfletcher.io
 #
@@ -132,7 +133,7 @@ spin() {
 # Package groups
 # bash 3.2 on macOS has no associative arrays, so these are parallel arrays.
 #----------------------------------------------------------------------
-GROUP_KEYS=(core dev kubernetes cloud aws security apps fonts python plugins dotfiles)
+GROUP_KEYS=(core dev kubernetes cloud aws security apps fonts python plugins mcp dotfiles)
 GROUP_DESC=(
     "Shell, search, git, everyday CLI"
     "Languages, build tools, linters"
@@ -144,9 +145,10 @@ GROUP_DESC=(
     "Nerd Fonts for the terminal prompt"
     "Python CLI tools via uv"
     "tmux tpm, vim lightline, fzf keys"
+    "Claude Code MCP servers (mcp-servers.json)"
     "Copy dotfiles/ into \$HOME"
 )
-GROUP_DEFAULT=(1 1 1 1 0 1 1 1 1 1 1)
+GROUP_DEFAULT=(1 1 1 1 0 1 1 1 1 1 1 1)
 GROUP_ON=()
 
 group_index() {
@@ -452,6 +454,71 @@ install_plugins() {
     fi
 }
 
+configure_mcp_servers() {
+    step "Claude Code MCP servers"
+    local list="$REPO_DIR/mcp-servers.json"
+    [ -f "$list" ] || { warn "mcp-servers.json not found, skipping"; return 0; }
+    if ! command -v claude >/dev/null 2>&1; then
+        warn "claude not installed (it is in the 'apps' group) - skipping"
+        return 0
+    fi
+    if ! command -v jq >/dev/null 2>&1; then
+        warn "jq not installed (it is in the 'core' group) - skipping"
+        return 0
+    fi
+
+    # User-scope servers live in ~/.claude.json (or $CLAUDE_CONFIG_DIR). It is
+    # read directly because `claude mcp add-json` refuses to overwrite an
+    # existing name, so a changed entry in the repo has to be removed first.
+    # ${VAR:-default} in mcp-servers.json is left as-is: Claude Code expands it
+    # when the server starts, so DD_SITE / AWS_PROFILE / AWS_MCP_REGION can
+    # change later.
+    local cfg="${CLAUDE_CONFIG_DIR:-$HOME}/.claude.json"
+    local names=() name
+    while IFS= read -r name; do names+=("$name"); done < <(jq -r '.mcpServers | keys_unsorted[]' "$list")
+
+    local total=${#names[@]} i=0 added=0 updated=0 unchanged=0 failed_n=0
+    [ "$total" -eq 0 ] && { info "nothing listed"; return 0; }
+    for name in "${names[@]}"; do
+        i=$((i + 1))
+        progress_bar "$i" "$total" "$name"
+        local want have
+        want="$(jq -cS --arg n "$name" '.mcpServers[$n]' "$list")"
+        have="$(jq -cS --arg n "$name" '.mcpServers[$n] // empty' "$cfg" 2>/dev/null)"
+        if [ "$have" = "$want" ]; then
+            unchanged=$((unchanged + 1))
+            continue
+        fi
+        if [ "$DRY_RUN" -eq 1 ]; then
+            if [ -n "$have" ]; then updated=$((updated + 1)); else added=$((added + 1)); fi
+            continue
+        fi
+        if [ -n "$have" ]; then
+            printf 'mcp: replacing %s, previous config: %s\n' "$name" "$have" >>"$LOG_FILE"
+            claude mcp remove -s user "$name" >>"$LOG_FILE" 2>&1 || :
+        fi
+        if claude mcp add-json -s user "$name" "$want" >>"$LOG_FILE" 2>&1; then
+            if [ -n "$have" ]; then updated=$((updated + 1)); else added=$((added + 1)); fi
+        else
+            failed_n=$((failed_n + 1)); FAILURES+=("mcp: $name")
+        fi
+    done
+    clear_line
+    local summary="$added added, $updated updated, $unchanged unchanged"
+    [ "$failed_n" -gt 0 ] && summary="$summary, ${RED}$failed_n failed${RESET}"
+    ok "$summary"
+
+    # The config is written regardless; these only decide whether it can start.
+    local cmd
+    while IFS= read -r cmd; do
+        command -v "$cmd" >/dev/null 2>&1 \
+            || warn "$cmd not found - servers launched with it will not start (it is in the 'dev' group)"
+    done < <(jq -r '[.mcpServers[] | .command // empty] | unique[]' "$list")
+    if jq -e '.mcpServers["chrome-devtools"]' "$list" >/dev/null && [ ! -d "/Applications/Google Chrome.app" ]; then
+        warn "Google Chrome not found - chrome-devtools needs it"
+    fi
+}
+
 apply_dotfiles() {
     step "Dotfiles"
     if [ ! -d "$DOTFILES_DIR" ]; then
@@ -502,10 +569,11 @@ summary() {
     fi
     printf '\n  %sNext steps%s\n' "$BOLD" "$RESET"
     printf '    1. Restart your terminal, or run: %sexec zsh%s\n' "$CYAN" "$RESET"
-    printf '    2. Set your terminal font to %sMesloLGS Nerd Font%s for the prompt glyphs\n' "$CYAN" "$RESET"
+    printf '    2. Ghostty is preconfigured; in iTerm2, set the font to %sMesloLGS Nerd Font%s\n' "$CYAN" "$RESET"
     printf '    3. In tmux, press %sprefix + I%s to fetch plugins\n' "$CYAN" "$RESET"
-    printf '    4. Sign in: %sgh auth login%s, %sgcloud auth login%s, %saz login%s\n\n' \
+    printf '    4. Sign in: %sgh auth login%s, %sgcloud auth login%s, %saz login%s\n' \
         "$CYAN" "$RESET" "$CYAN" "$RESET" "$CYAN" "$RESET"
+    printf '    5. In Claude Code, run %s/mcp%s to sign in to the remote MCP servers\n\n' "$CYAN" "$RESET"
 }
 
 usage() {
@@ -586,7 +654,7 @@ fi
 STEP_TOTAL=2
 for g in "${selected[@]}"; do
     case "$g" in
-        python|plugins|dotfiles) STEP_TOTAL=$((STEP_TOTAL + 1)) ;;
+        python|plugins|mcp|dotfiles) STEP_TOTAL=$((STEP_TOTAL + 1)) ;;
         *) [ -f "$BREW_DIR/Brewfile.$g" ] && STEP_TOTAL=$((STEP_TOTAL + 1)) ;;
     esac
 done
@@ -596,7 +664,7 @@ ensure_homebrew || { summary; exit 1; }
 
 for g in "${selected[@]}"; do
     case "$g" in
-        python|plugins|dotfiles) continue ;;
+        python|plugins|mcp|dotfiles) continue ;;
     esac
     [ -f "$BREW_DIR/Brewfile.$g" ] || continue
     step "Packages: $g"
@@ -605,6 +673,7 @@ done
 
 is_on python   && install_python_tools
 is_on plugins  && install_plugins
+is_on mcp      && configure_mcp_servers
 is_on dotfiles && apply_dotfiles
 
 summary

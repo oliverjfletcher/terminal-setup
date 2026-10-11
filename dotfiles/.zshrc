@@ -107,6 +107,25 @@ alias ...='cd ../..'
 alias reload='exec zsh'
 alias path='echo $PATH | tr ":" "\n"'
 
+# Switch the global git identity: `gitprofile work|personal`, or no argument to
+# show the current one. Profiles live in ~/.config/git/profiles/; work is the
+# default [user] in ~/.gitconfig, so it has no profile file.
+gitprofile() {
+    local link="$HOME/.config/git/active-profile"
+    case "$1" in
+        "") ;;
+        work) rm -f "$link" ;;
+        *)
+            if [ ! -f "$HOME/.config/git/profiles/$1" ]; then
+                echo "usage: gitprofile [work|$(ls "$HOME/.config/git/profiles" | tr '\n' '|' | sed 's/|$//')]" >&2
+                return 1
+            fi
+            ln -sfn "profiles/$1" "$link"
+            ;;
+    esac
+    echo "git: $(git config --global --includes user.name) <$(git config --global --includes user.email)>"
+}
+
 # Use VS Code's own `code` CLI rather than a shell wrapper - the wrapper broke
 # `code --wait` (and therefore git's editor integration) and `code --diff`.
 VSCODE_BIN="/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
@@ -124,6 +143,22 @@ export PATH="$HOME/go/bin:$PATH"
 
 export EDITOR="${EDITOR:-nvim}"
 export VISUAL="$EDITOR"
+
+#-----------------------------------------------------------------------
+# brew upgrade once per Ghostty launch
+# Keyed on Ghostty's PID so it runs in the first shell after Ghostty starts,
+# not in every new tab, split or tmux pane. Ctrl-C skips it.
+#-----------------------------------------------------------------------
+if [ "$TERM_PROGRAM" = ghostty ] && [ -z "$TMUX" ] && command -v brew >/dev/null; then
+    _ghostty_pid=$(pgrep -nx ghostty 2>/dev/null)
+    _brew_stamp="${XDG_CACHE_HOME:-$HOME/.cache}/brew-upgrade.ghostty"
+    if [ -n "$_ghostty_pid" ] && [ "$(cat "$_brew_stamp" 2>/dev/null)" != "$_ghostty_pid" ]; then
+        mkdir -p "${_brew_stamp:h}" && echo "$_ghostty_pid" > "$_brew_stamp"
+        echo "==> brew upgrade (once per Ghostty launch, Ctrl-C to skip)"
+        brew upgrade
+    fi
+    unset _ghostty_pid _brew_stamp
+fi
 
 # Local, machine-specific overrides that should never be committed.
 [ -f "$HOME/.zshrc.local" ] && source "$HOME/.zshrc.local"

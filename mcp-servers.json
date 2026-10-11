@@ -1,0 +1,77 @@
+{
+  "mcpServers": {
+    "aws-mcp": {
+      "command": "uvx",
+      "args": [
+        "mcp-proxy-for-aws@latest",
+        "https://aws-mcp.${AWS_MCP_REGION:-eu-west-1}.api.aws/mcp",
+        "--region", "${AWS_MCP_REGION:-eu-west-1}",
+        "--metadata", "AWS_REGION=${AWS_REGION:-eu-west-1}"
+      ],
+      "env": {
+        "AWS_PROFILE": "${AWS_PROFILE:-default}"
+      }
+    },
+    "aws-api": {
+      "command": "uvx",
+      "args": ["awslabs.aws-api-mcp-server@latest"],
+      "env": {
+        "AWS_REGION": "${AWS_REGION:-us-east-1}",
+        "AWS_API_MCP_PROFILE_NAME": "${AWS_PROFILE:-default}"
+      }
+    },
+    "aws-billing": {
+      "command": "uvx",
+      "args": ["awslabs.billing-cost-management-mcp-server@latest"],
+      "env": {
+        "AWS_REGION": "${AWS_REGION:-us-east-1}",
+        "AWS_PROFILE": "${AWS_PROFILE:-default}",
+        "FASTMCP_LOG_LEVEL": "ERROR"
+      }
+    },
+    "aws-docs": {
+      "command": "uvx",
+      "args": ["awslabs.aws-documentation-mcp-server@latest"],
+      "env": {
+        "AWS_DOCUMENTATION_PARTITION": "aws",
+        "FASTMCP_LOG_LEVEL": "ERROR"
+      }
+    },
+    "atlassian": {
+      "type": "http",
+      "url": "https://mcp.atlassian.com/v2/mcp"
+    },
+    "cloudflare": {
+      "type": "http",
+      "url": "https://mcp.cloudflare.com/mcp"
+    },
+    "chrome-devtools": {
+      "command": "npx",
+      "args": ["-y", "chrome-devtools-mcp@latest"]
+    },
+    "datadog": {
+      "type": "http",
+      "url": "https://mcp.${DD_SITE:-datadoghq.eu}/api/unstable/mcp-server/mcp"
+    },
+    "excalidraw": {
+      "type": "http",
+      "url": "https://mcp.excalidraw.com/mcp"
+    },
+    "kubernetes": {
+      "command": "npx",
+      "args": ["-y", "kubernetes-mcp-server@latest"]
+    },
+    "slack": {
+      "type": "http",
+      "url": "https://mcp.slack.com/mcp",
+      "oauth": {
+        "clientId": "1601185624273.8899143856786",
+        "callbackPort": 3118
+      }
+    },
+    "wiz": {
+      "type": "http",
+      "url": "https://mcp.app.wiz.io/"
+    }
+  }
+}
